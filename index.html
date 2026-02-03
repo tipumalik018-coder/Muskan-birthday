@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sultan ❤️ Muskan</title>
+    <style>
+        /* --- FONTS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Dancing+Script:wght@700&family=Poppins:wght@300;600&family=VT323&display=swap');
+
+        /* --- GLOBAL SETTINGS --- */
+        body {
+            margin: 0; padding: 0; height: 100vh; width: 100vw;
+            display: flex; justify-content: center; align-items: center;
+            background: linear-gradient(135deg, #2b0000, #4a001f, #1a0b2e);
+            color: white; font-family: 'Poppins', sans-serif; overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #mobile-container {
+            width: 100%; height: 100%; max-width: 450px;
+            position: relative; perspective: 1000px;
+        }
+
+        .layer {
+            position: absolute; width: 100%; height: 100%;
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; padding: 20px; box-sizing: border-box;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .layer.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        /* --- BACK BUTTON --- */
+        .back-btn {
+            position: absolute; top: 20px; left: 20px;
+            background: rgba(255,255,255,0.2); border: 1px solid white;
+            color: white; border-radius: 50%; width: 40px; height: 40px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.2rem; cursor: pointer; z-index: 1000;
+        }
+
+        /* --- DECORATIONS (BALLOONS & BUNTING) --- */
+        .bunting { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 5px; z-index: 5; }
+        .flag { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid; }
+        
+        .balloon-container { position: absolute; top: 15%; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; pointer-events: none; z-index: 5; }
+        .balloon { width: 50px; height: 65px; background: red; border-radius: 50%; position: relative; animation: floatBalloon 3s infinite ease-in-out alternate; }
+        .balloon::before { content: ''; position: absolute; bottom: -10px; left: 23px; width: 2px; height: 30px; background: white; }
+        .b1 { background: #ff0055; animation-delay: 0s; }
+        .b2 { background: gold; animation-delay: 1s; }
+        .b3 { background: #00e5ff; animation-delay: 0.5s; }
+        @keyframes floatBalloon { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+
+        /* --- STYLES (Existing & New) --- */
+        #countdown-layer { z-index: 2000; background: radial-gradient(circle, #1a000d, #000000); }
+        .ring-loader { position: absolute; width: 220px; height: 220px; border: 4px solid transparent; border-top: 4px solid #ff0055; border-right: 4px solid gold; border-radius: 50%; animation: spin 1s linear infinite; }
+        .ring-loader:before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 4px solid transparent; border-top: 4px solid #00e5ff; border-radius: 50%; animation: spinReverse 1.5s linear infinite; }
+        #count-num { font-family: 'Dancing Script'; font-size: 8rem; background: linear-gradient(to bottom, #ff9a9e, #ff0055); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(255, 0, 85, 0.5); animation: heartbeat 1s infinite; }
+        
+        .intro-heading { font-family: 'Dancing Script'; font-size: 3rem; color: #ff9a9e; margin-bottom: 30px; text-shadow: 0 0 10px #ff0055; z-index: 10; }
+        .cake-container { position: relative; width: 200px; height: 200px; margin-bottom: 30px; z-index: 10; }
+        .cake-body { position: absolute; bottom: 0; width: 100%; height: 100px; background: #ff3366; border-radius: 10px 10px 0 0; }
+        .cake-top { position: absolute; top: 80px; width: 100%; height: 40px; background: #ff85a2; border-radius: 50%; }
+        .candle { position: absolute; top: 40px; left: 50%; width: 20px; height: 60px; background: white; transform: translateX(-50%); border-radius: 5px; }
+        .flame { position: absolute; top: 10px; left: 50%; width: 15px; height: 25px; background: orange; border-radius: 50% 50% 20% 20%; transform: translateX(-50%); animation: flicker 0.5s infinite alternate; box-shadow: 0 0 20px gold; }
+        
+        .start-btn, .next-arrow { background: white; color: #ff0055; padding: 12px 30px; border-radius: 50px; font-size: 1.1rem; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px rgba(255, 0, 85, 0.5); z-index: 10; margin-top: 20px; transition: transform 0.1s; }
+        .start-btn:active, .next-arrow:active { transform: scale(0.95); }
+
+        .envelope-wrapper { width: 280px; height: 180px; position: relative; cursor: pointer; margin-top: 30px; }
+        .envelope-body { position: absolute; bottom: 0; width: 100%; height: 100%; background: #ff3366; clip-path: polygon(0 0, 50% 40%, 100% 0, 100% 100%, 0 100%); z-index: 2; }
+        .envelope-flap { position: absolute; top: 0; width: 100%; height: 100%; background: #ff5c85; clip-path: polygon(0 0, 100% 0, 50% 55%); z-index: 3; transition: 0.6s; transform-origin: top; }
+        .envelope-wrapper.open .envelope-flap { transform: rotateX(180deg); z-index: 0; }
+        .letter { position: absolute; width: 90%; height: 280px; bottom: 0; left: 5%; background: #fff; color: #333; z-index: 1; padding: 20px; box-sizing: border-box; font-family: 'Caveat', cursive; font-size: 1.4rem; line-height: 1.3; text-align: left; transition: transform 0.6s 0.3s; border-radius: 5px; overflow-y: auto; }
+        .envelope-wrapper.open .letter { transform: translateY(-130px); z-index: 4; }
+
+        /* Love Meter & Chocolate Styles */
+        .fingerprint { font-size: 5rem; color: #ff3366; border: 3px solid #ff3366; padding: 20px; border-radius: 50%; animation: pulse 1.5s infinite; cursor: pointer; }
+        .meter-result { font-family: 'VT323'; font-size: 2rem; color: #00ff00; margin-top: 20px; display: none; }
+        .choco-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .choco { font-size: 3rem; cursor: pointer; transition: transform 0.2s; }
+        .choco:active { transform: scale(0.5); opacity: 0; }
+
+        /* Other Styles */
+        .scanner-box { font-family: 'VT323', monospace; background: black; border: 2px solid #00ff00; padding: 20px; border-radius: 10px; width: 80%; color: #00ff00; text-align: left; box-shadow: 0 0 20px #00ff00; }
+        .progress-bar { width: 100%; height: 10px; background: #333; margin-top: 10px; }
+        .fill-green { height: 100%; background: #00ff00; width: 0%; transition: width 2s; }
+        .fill-red { height: 100%; background: red; width: 0%; transition: width 2s; }
+        
+        .book-stage { width: 320px; height: 480px; position: relative; perspective: 1500px; }
+        .book-page { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background: white; border-radius: 10px; display: flex; flex-direction: column; align-items: center; padding: 10px; box-sizing: border-box; transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1); transform-origin: left; box-shadow: 0 5px 15px rgba(0,0,0,0.3); backface-visibility: hidden; }
+        #p1 { z-index: 5; } #p2 { z-index: 4; } #p3 { z-index: 3; } #p4 { z-index: 2; } #p5 { z-index: 1; }
+        .book-page.flipped { transform: rotateY(-140deg); }
+        .photo-box { width: 100%; height: 350px; background: #ffe6eb; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; position: relative; }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .caption-text { margin-top: 15px; font-family: 'Dancing Script'; color: #ff0055; font-size: 1.8rem; text-shadow: 1px 1px 0px #ffd1dc; }
+        
+        .moto-btn { background: linear-gradient(45deg, #ff0055, gold); color: white; border: none; padding: 20px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; width: 140px; height: 140px; box-shadow: 0 0 30px #ff0055; animation: pulse 1s infinite; cursor: pointer; }
+        .gift-container { width: 300px; height: 300px; background: white; padding: 10px; border-radius: 15px; transform: rotate(-2deg); box-shadow: 0 0 50px gold; }
+        .gift-container img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+        .gift-msg { font-size: 1.3rem; margin-top: 20px; color: gold; font-family: 'Dancing Script'; }
+
+        /* Floating Elements */
+        .floater { position: absolute; pointer-events: none; animation: floatUp 2.5s forwards; z-index: 999; }
+        .moto-text-float { font-family: 'Dancing Script'; font-size: 1.5rem; text-shadow: 0 0 5px black; white-space: nowrap; }
+        .click-sparkle { position: absolute; pointer-events: none; width: 10px; height: 10px; background: white; border-radius: 50%; box-shadow: 0 0 10px gold; animation: fadeOut 1s forwards; z-index: 9999; }
+
+        @keyframes floatUp { to { transform: translateY(-300px) rotate(360deg); opacity: 0; } }
+        @keyframes fadeOut { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spinReverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+        @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        @keyframes blink { from { opacity: 0.5; } to { opacity: 1; } }
+        @keyframes flicker { from { opacity: 1; transform: translateX(-50%) scale(1); } to { opacity: 0.8; transform: translateX(-50%) scale(1.1); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .falling-flower { position: absolute; top: -10%; font-size: 1.5rem; animation: fall linear forwards; z-index: 5; pointer-events: none; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+<audio id="bg-music" src="music.mp3" loop></audio>
+<audio id="magic-sound" src="magic.mp3"></audio>
+<audio id="flip-sound" src="flip.mp3"></audio>
+<audio id="kiss-sound" src="kiss.mp3"></audio>
+
+<div id="mobile-container">
+
+    <div id="layer0" class="layer active" style="z-index: 2000; background: radial-gradient(circle, #1a000d, #000000);">
+        <div class="ring-loader"></div>
+        <div id="count-num">3</div>
+        <div class="ready-text">Are You Ready?</div>
+    </div>
+
+    <div id="layer1" class="layer">
+        <div class="bunting">
+            <div class="flag" style="color:red"></div><div class="flag" style="color:gold"></div><div class="flag" style="color:cyan"></div><div class="flag" style="color:lime"></div>
+        </div>
+        <div class="balloon-container"><div class="balloon b1"></div><div class="balloon b2"></div><div class="balloon b3"></div></div>
+        
+        <h1 class="intro-heading">Happy birthday mre jan...</h1>
+        <div class="cake-container">
+            <div class="cake-body"></div><div class="cake-top"></div><div class="candle"><div class="flame"></div></div>
+        </div>
+        <button class="start-btn" onclick="nextLayer(2)">Open ❤️</button>
+    </div>
+
+    <div id="layer2" class="layer">
+        <div class="back-btn" onclick="nextLayer(1)">⬅️</div>
+        <div class="envelope-wrapper" id="envelope" onclick="openEnvelope()">
+            <div class="envelope-body"></div>
+            <div class="letter">
+                <span style="color:#ff0055; font-weight:bold;">Mre payare Muskan,</span><br><br>
+                Ma tumra Sultan. Ma tum se boht payar krta hn. Ye tum b jantii ho. Ma tume kabi dhoka ni du ga. Mra wada ha.<br><br>
+                Hameesha khush rehna jesy abi khush ho. Aj tumra din ha... Allah tume hameesha mre sat khush rakhy.
+            </div>
+            <div class="envelope-flap"></div>
+        </div>
+        <p style="margin-top: 150px; font-size: 0.8rem; opacity: 0.7;">(Tap Envelope)</p>
+        <button class="next-arrow" id="btn-l2" style="opacity:0; transition:1s;" onclick="nextLayer(3)">Run Scanner ➡️</button>
+    </div>
+
+    <div id="layer3" class="layer">
+        <div class="back-btn" onclick="nextLayer(2)">⬅️</div>
+        <h1 style="font-family:'VT323'; color:#00ff00;">SYSTEM ALERT</h1>
+        <div class="scanner-box">
+            <div class="scan-text">Scanning Beauty...</div>
+            <div class="progress-bar"><div class="fill-green" id="bar1"></div></div>
+            <div id="res1" style="color:white; font-size:0.9rem;"></div>
+            <br>
+            <div class="scan-text">Scanning Brain...</div>
+            <div class="progress-bar"><div class="fill-red" id="bar2"></div></div>
+            <div id="res2" style="color:white; font-size:0.9rem;"></div>
+        </div>
+        <button class="next-arrow" id="btn-l3" style="display:none;" onclick="nextLayer(4)">See Memories ➡️</button>
+    </div>
+
+    <div id="layer4" class="layer">
+        <div class="back-btn" onclick="nextLayer(3)">⬅️</div>
+        <div class="book-stage">
+            <div class="book-page" id="p1" onclick="flipPage(this)"><div class="corner-emoji">😘</div><div class="photo-box"><img src="photo1.jpeg"></div><div class="caption-text">Dekho mre chand jasi jan 🌙</div></div>
+            <div class="book-page" id="p2" onclick="flipPage(this)"><div class="photo-box"><img src="photo2.jpeg"></div><div class="caption-text">So lovely... 🌹</div></div>
+            <div class="book-page" id="p3" onclick="flipPage(this)"><div class="photo-box"><img src="photo3.jpeg"></div><div class="caption-text">Beautiful girl ✨</div></div>
+            <div class="book-page" id="p4" onclick="flipPage(this)"><div class="corner-emoji">😂</div><div class="photo-box"><img src="photo4.jpeg"></div><div class="caption-text">Mri Naughty Moto ❤️</div></div>
+            <div class="book-page" id="p5"><div class="corner-emoji">💖</div><div class="photo-box"><img src="photo5.jpeg"></div><div class="caption-text">Mri Zindagi 🌍</div><button class="next-arrow" style="margin-top: 10px;" onclick="nextLayer(5)">Check Love ➡️</button></div>
+        </div>
+    </div>
+
+    <div id="layer5" class="layer">
+        <div class="back-btn" onclick="nextLayer(4)">⬅️</div>
+        <h1>Love Meter ❤️</h1>
+        <p>Put your thumb here:</p>
+        <div class="fingerprint" onclick="checkLove()">👍</div>
+        <div id="love-res" class="meter-result">Calculating...</div>
+        <button class="next-arrow" id="btn-l5" style="display:none;" onclick="nextLayer(6)">Next ➡️</button>
+    </div>
+
+    <div id="layer6" class="layer">
+        <div class="back-btn" onclick="nextLayer(5)">⬅️</div>
+        <div class="balloon-container"><div class="balloon b1"></div><div class="balloon b2"></div><div class="balloon b3"></div></div>
+        <div style="font-size: 6rem;">🎂</div>
+        <div style="border: 2px solid gold; padding: 20px; border-radius: 15px; margin-top: 20px;">
+            <h1 style="margin:0; font-size:4rem;">15 FEB</h1>
+            <h2 style="margin:0;">2005</h2>
+        </div>
+        <p>A Queen Was Born 👑</p>
+        <button class="next-arrow" onclick="nextLayer(7)">Have Chocolates ➡️</button>
+    </div>
+
+    <div id="layer7" class="layer">
+        <div class="back-btn" onclick="nextLayer(6)">⬅️</div>
+        <h1>Sweets for You 🍫</h1>
+        <p>Eat them (Tap)!</p>
+        <div class="choco-grid">
+            <div class="choco" onclick="eat(this)">🍫</div><div class="choco" onclick="eat(this)">🍩</div><div class="choco" onclick="eat(this)">🍬</div>
+            <div class="choco" onclick="eat(this)">🍪</div><div class="choco" onclick="eat(this)">🍫</div><div class="choco" onclick="eat(this)">🍩</div>
+        </div>
+        <button class="next-arrow" onclick="nextLayer(8)">Get Hugs ➡️</button>
+    </div>
+
+    <div id="layer8" class="layer">
+        <div class="back-btn" onclick="nextLayer(7)">⬅️</div>
+        <h1>Need a Hug?</h1>
+        <div class="hug-bear" onclick="giveHugs()">🐻</div>
+        <p>Tap the Bear!</p>
+        <button class="next-arrow" onclick="nextLayer(9)">Promise ➡️</button>
+    </div>
+
+    <div id="layer9" class="layer">
+        <div class="back-btn" onclick="nextLayer(8)">⬅️</div>
+        <h1>Promise Me...</h1>
+        <div class="promise-box">
+            <p>"Tum hamesha mere saath rahogi, chahe kuch bhi ho jaye."</p>
+            <div style="font-size:3rem; margin-top:10px;">🤝</div>
+        </div>
+        <button class="next-arrow" onclick="nextLayer(10)">Magic Button ➡️</button>
+    </div>
+
+    <div id="layer10" class="layer">
+        <div class="back-btn" onclick="nextLayer(9)">⬅️</div>
+        <h2 style="font-family:'Caveat'; font-size: 2rem;">Tap for Magic!</h2>
+        <button class="moto-btn" onclick="celebrateMoto()">CLICK ME<br>MOTO! ✨</button>
+        <button class="next-arrow" onclick="nextLayer(11)">Final Gift 🎁</button>
+    </div>
+
+    <div id="layer11" class="layer">
+        <div class="back-btn" onclick="nextLayer(10)">⬅️</div>
+        <h1>Your Special Gift</h1>
+        <div class="gift-container"><img src="cat.gif" alt="Cute Cat"></div>
+        <div class="gift-msg">Happy birthday mre jan...<br>mre payare Muskan ❤️</div>
+        <p>I Love You Forever.</p>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+    // --- GLOBAL SETUP ---
+    window.onload = function() {
+        // Set Audio Volumes
+        const magic = document.getElementById('magic-sound'); if(magic) magic.volume = 0.3;
+        
+        let count = 3;
+        const timer = setInterval(() => {
+            count--;
+            if(count > 0) document.getElementById('count-num').innerText = count;
+            else {
+                clearInterval(timer);
+                document.getElementById('layer0').style.display = 'none';
+                document.getElementById('layer1').classList.add('active');
+                startIntroEffects();
+            }
+        }, 1000);
+
+        // Touch Magic Sparkle
+        document.body.addEventListener('click', function(e) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'click-sparkle';
+            sparkle.style.left = e.clientX + 'px';
+            sparkle.style.top = e.clientY + 'px';
+            sparkle.style.backgroundColor = ['gold', '#ff0055', 'white', 'cyan'][Math.floor(Math.random()*4)];
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 1000);
+        });
+    };
+
+    // --- EFFECTS ---
+    function startIntroEffects() {
+        const fi = setInterval(() => confetti({ particleCount: 30, spread: 100, origin: { y: 0.6 }, colors: ['#ff0055', 'gold'], zIndex: 1 }), 800);
+        const fl = setInterval(() => {
+            const f = document.createElement('div'); f.className = 'falling-flower'; f.innerText = ['🌸', '🌹', '🌺'][Math.floor(Math.random()*3)];
+            f.style.left = Math.random() * 100 + 'vw'; f.style.animationDuration = Math.random() * 3 + 2 + 's'; document.body.appendChild(f); setTimeout(()=>f.remove(), 5000);
+        }, 300);
+        window.stopIntro = function() { clearInterval(fi); clearInterval(fl); }
+    }
+
+    // --- AUDIO HELPER ---
+    function playSnd(id) { 
+        const s = document.getElementById(id); 
+        if(s) { s.currentTime = 0; s.play().catch(e=>{}); } 
+    }
+
+    // --- NAVIGATION ---
+    function nextLayer(num) {
+        playSnd('magic-sound'); // Play click sound
+
+        if(document.getElementById('layer1').classList.contains('active')) if(window.stopIntro) window.stopIntro();
+        document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+        document.getElementById('layer' + num).classList.add('active');
+        
+        // Triggers per layer
+        if(num === 2) { const bg = document.getElementById('bg-music'); if(bg) { bg.volume=0.5; bg.play().catch(e=>{}); } }
+        if(num === 3) runScanner(); 
+        if(num === 6) confetti({ particleCount: 100, spread: 70 });
+        if(num === 11) {
+            confetti({ particleCount: 200, spread: 100, origin: {y:0.6} });
+            playSnd('kiss-sound');
+        }
+    }
+
+    // --- FEATURE LOGIC ---
+    function runScanner() {
+        setTimeout(() => { document.getElementById('bar1').style.width = '100%'; setTimeout(() => document.getElementById('res1').innerText = "Result: 100% Beautiful 😍", 2000); }, 500);
+        setTimeout(() => { document.getElementById('bar2').style.width = '10%'; document.getElementById('bar2').style.background = 'red'; setTimeout(() => { document.getElementById('res2').innerText = "Error: BRAIN NOT FOUND! 😂"; document.getElementById('btn-l3').style.display = 'inline-block'; }, 2000); }, 3000);
+    }
+
+    function checkLove() {
+        playSnd('magic-sound');
+        document.getElementById('love-res').style.display = 'block';
+        setTimeout(() => { document.getElementById('love-res').innerText = "Result: INFINITE LOVE ❤️"; document.getElementById('btn-l5').style.display = 'inline-block'; confetti({ particleCount: 50 }); }, 1000);
+    }
+
+    function eat(el) {
+        playSnd('magic-sound');
+        el.style.transform = "scale(0)";
+        confetti({ particleCount: 10, startVelocity: 10, origin: { x: el.getBoundingClientRect().left/window.innerWidth, y: el.getBoundingClientRect().top/window.innerHeight } });
+    }
+
+    function giveHugs() {
+        playSnd('magic-sound');
+        confetti({ shapes: ['circle'], colors: ['#ff0000', '#ffccd5'], particleCount: 50 });
+        const emojis = ['🐻', '🤗', '❤️'];
+        for(let i=0; i<5; i++) {
+            const el = document.createElement('div'); el.className = 'floater'; el.innerText = emojis[Math.floor(Math.random()*3)];
+            el.style.left = Math.random()*80+10+'%'; el.style.top = '50%'; el.style.fontSize = '2rem';
+            document.body.appendChild(el); setTimeout(()=>el.remove(), 2000);
+        }
+    }
+
+    function celebrateMoto() {
+        playSnd('magic-sound');
+        confetti({ particleCount: 60, spread: 80, origin: { y: 0.6 }, colors: ['#ff0055', 'gold'] });
+        const t = document.createElement('div'); t.className = 'floater moto-text-float'; t.innerText = "Happy Birthday Moto ❤️";
+        t.style.left = Math.random()*60+20+'%'; t.style.top = '50%'; t.style.color = ['#ff0055', 'gold', '#00e5ff'][Math.floor(Math.random()*3)];
+        document.body.appendChild(t); setTimeout(()=>t.remove(), 2500);
+    }
+
+    function openEnvelope() { playSnd('magic-sound'); document.getElementById('envelope').classList.add('open'); setTimeout(() => document.getElementById('btn-l2').style.opacity = '1', 1000); }
+    function flipPage(element) { playSnd('flip-sound'); element.classList.add('flipped'); }
+</script>
+
+</body>
+</html>
